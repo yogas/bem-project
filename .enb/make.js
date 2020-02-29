@@ -18,6 +18,7 @@ const techs = {
         // bemhtml
         bemhtml: require('enb-bemxjst/techs/bemhtml'),
         bemjsonToHtml: require('enb-bemxjst/techs/bemjson-to-html'),
+
         // beautify-html
         htmlBeautify: require('enb-beautify/techs/enb-beautify-html')
     };
@@ -93,13 +94,16 @@ module.exports = function(config) {
                 sources: ['?.browser.js', '?.browser.bemhtml.js']
             }],
 
+            // beauty.html
+            // для того чтобы файл появился в bundles необходимо выполнить команду:
+            //  ./node_modules/.bin/enb make
             [techs.htmlBeautify],
 
             // borschik
             [techs.borschik, { source: '?.js', target: '?.min.js', minify: isProd }],
-            [techs.borschik, { source: '?.css', target: '?.min.css', minify: isProd }]
+            [techs.borschik, { source: '?.css', target: '?.min.css', minify: isProd }],
         ]);
 
-        nodeConfig.addTargets([/* '?.bemtree.js', */ '?.html', '?.min.css', '?.min.js']);
+        nodeConfig.addTargets([ /*'?.bemtree.js',*/ '?.html', '?.min.css', '?.min.js', '?.beauty.html']);
     });
 };
