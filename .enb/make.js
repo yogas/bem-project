@@ -48,11 +48,7 @@ module.exports = function(config) {
             [enbBemTechs.files],
 
             // css
-            [techs.postcss, {
-                target: '?.css',
-                oneOfSourceSuffixes: ['post.css', 'css'],
-                plugins: techs.postcssPlugins
-            }],
+            [techs.stylus],
 
             // bemtree
             // [techs.bemtree, { sourceSuffixes: ['bemtree', 'bemtree.js'] }],
