@@ -7,19 +7,7 @@ const techs = {
         borschik: require('enb-borschik/techs/borschik'),
 
         // css
-        postcss: require('enb-postcss/techs/enb-postcss'),
-        postcssPlugins: [
-            require('postcss-import')(),
-            require('postcss-each'),
-            require('postcss-for'),
-            require('postcss-simple-vars')(),
-            require('postcss-calc')(),
-            require('postcss-nested'),
-            require('rebem-css'),
-            require('postcss-url')({ url: 'rebase' }),
-            require('autoprefixer')(),
-            require('postcss-reporter')()
-        ],
+        stylus: require('enb-stylus/techs/stylus'),
 
         // js
         browserJs: require('enb-js/techs/browser-js'),
@@ -30,18 +18,20 @@ const techs = {
         // bemhtml
         bemhtml: require('enb-bemxjst/techs/bemhtml'),
         bemjsonToHtml: require('enb-bemxjst/techs/bemjson-to-html')
-    },
-    enbBemTechs = require('enb-bem-techs'),
-    levels = [
-        { path: 'node_modules/bem-core/common.blocks', check: false },
-        { path: 'node_modules/bem-core/desktop.blocks', check: false },
-        { path: 'node_modules/bem-components/common.blocks', check: false },
-        { path: 'node_modules/bem-components/desktop.blocks', check: false },
-        { path: 'node_modules/bem-components/design/common.blocks', check: false },
-        { path: 'node_modules/bem-components/design/desktop.blocks', check: false },
-        'common.blocks',
-        'desktop.blocks'
-    ];
+    };
+
+const enbBemTechs = require('enb-bem-techs');
+
+const levels = [
+    //{ path: 'node_modules/bem-core/common.blocks', check: false },
+    //{ path: 'node_modules/bem-core/desktop.blocks', check: false },
+    //{ path: 'node_modules/bem-components/common.blocks', check: false },
+    //{ path: 'node_modules/bem-components/desktop.blocks', check: false },
+    //{ path: 'node_modules/bem-components/design/common.blocks', check: false },
+    //{ path: 'node_modules/bem-components/design/desktop.blocks', check: false },
+    'common.blocks',
+    'desktop.blocks'
+];
 
 module.exports = function(config) {
     const isProd = process.env.YENV === 'production';
