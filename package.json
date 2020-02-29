@@ -48,6 +48,7 @@
     "postcss-simple-vars": "^4.0.0",
     "postcss-url": "^7.0.0",
     "rebem-css": "^0.2.0",
+    "stylus": "^0.54.7",
     "through2-filter": "^2.0.0",
     "ym": "^0.1.2"
   },
