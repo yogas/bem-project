@@ -17,7 +17,9 @@ const techs = {
 
         // bemhtml
         bemhtml: require('enb-bemxjst/techs/bemhtml'),
-        bemjsonToHtml: require('enb-bemxjst/techs/bemjson-to-html')
+        bemjsonToHtml: require('enb-bemxjst/techs/bemjson-to-html'),
+        // beautify-html
+        //htmlBeautify: require('enb-beautify/techs/enb-beautify-html')
     };
 
 const enbBemTechs = require('enb-bem-techs');
