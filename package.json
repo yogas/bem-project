@@ -58,5 +58,8 @@
     "start": "enb server",
     "build": "enb make"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "enb-beautify": "0.0.3"
+  }
 }

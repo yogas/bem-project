@@ -19,7 +19,7 @@ const techs = {
         bemhtml: require('enb-bemxjst/techs/bemhtml'),
         bemjsonToHtml: require('enb-bemxjst/techs/bemjson-to-html'),
         // beautify-html
-        //htmlBeautify: require('enb-beautify/techs/enb-beautify-html')
+        htmlBeautify: require('enb-beautify/techs/enb-beautify-html')
     };
 
 const enbBemTechs = require('enb-bem-techs');
@@ -92,6 +92,8 @@ module.exports = function(config) {
                 target: '?.js',
                 sources: ['?.browser.js', '?.browser.bemhtml.js']
             }],
+
+            [techs.htmlBeautify],
 
             // borschik
             [techs.borschik, { source: '?.js', target: '?.min.js', minify: isProd }],
