@@ -40,7 +40,7 @@ const levels = [
 module.exports = function(config) {
     const isProd = process.env.YENV === 'production';
 
-    config.nodes('*.bundles/*', function(nodeConfig) {
+    config.nodes('*.bundles/*', (nodeConfig) => {
         nodeConfig.addTechs([
             // essential
             [enbBemTechs.levels, { levels: levels }],
@@ -105,5 +105,9 @@ module.exports = function(config) {
         ]);
 
         nodeConfig.addTargets([ /*'?.bemtree.js',*/ '?.html', '?.min.css', '?.min.js', '?.beauty.html']);
+    });
+
+    config.task('dist', (task) => {
+        console.log(task);
     });
 };

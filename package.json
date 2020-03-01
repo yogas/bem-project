@@ -56,7 +56,8 @@
   "scripts": {
     "test": "enb make && enb make clean && gulp",
     "start": "enb server",
-    "build": "enb make"
+    "build": "enb make",
+    "dist" : "YENV=production enb make dist -n"
   },
   "private": true,
   "dependencies": {
