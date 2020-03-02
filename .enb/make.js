@@ -24,11 +24,16 @@ const techs = {
     };
 
 const enbBemTechs = require('enb-bem-techs');
+const glob = require('glob');
+const path = require('path');
+const js = require('enb-js/techs/browser-js.js');
+const fs = require('fs');
+const fse = require('fs-extra');
 
 const levels = [
     { path: 'node_modules/bem-core/common.blocks', check: false },
     { path: 'node_modules/bem-core/desktop.blocks', check: false },
-    // disable yandex components
+    // отключаем компоненты Яндекса
     //{ path: 'node_modules/bem-components/common.blocks', check: false },
     //{ path: 'node_modules/bem-components/desktop.blocks', check: false },
     //{ path: 'node_modules/bem-components/design/common.blocks', check: false },
@@ -37,77 +42,189 @@ const levels = [
     'desktop.blocks'
 ];
 
-module.exports = function(config) {
+const createDir = (name) => {
+    if (!fs.existsSync(name)) {
+        fs.mkdirSync(name);
+    }
+}
+
+const make = (config) => {
     const isProd = process.env.YENV === 'production';
 
-    config.nodes('*.bundles/*', (nodeConfig) => {
-        nodeConfig.addTechs([
-            // essential
-            [enbBemTechs.levels, { levels: levels }],
-            [techs.fileProvider, { target: '?.bemjson.js' }],
-            [enbBemTechs.bemjsonToBemdecl],
-            [enbBemTechs.deps],
-            [enbBemTechs.files],
+    config.nodes('desktop.bundles/*', (nodeConfig) => {
+        const node = path.basename(nodeConfig.getPath());
+        if (node !== 'merged') {
+            nodeConfig.addTechs([
+                // essential
+                [enbBemTechs.levels, {levels: levels}],
+                [techs.fileProvider, {target: '?.bemjson.js'}],
+                [enbBemTechs.bemjsonToBemdecl],
+                [enbBemTechs.deps],
+                [enbBemTechs.files],
 
-            // css
-            [techs.stylus],
+                // css
+                [techs.stylus],
 
-            // bemtree
-            // [techs.bemtree, { sourceSuffixes: ['bemtree', 'bemtree.js'] }],
+                // bemtree
+                // [techs.bemtree, { sourceSuffixes: ['bemtree', 'bemtree.js'] }],
 
-            // bemhtml
-            [techs.bemhtml, {
-                sourceSuffixes: ['bemhtml', 'bemhtml.js'],
-                forceBaseTemplates: true,
-                engineOptions : { elemJsInstances : true }
-            }],
+                // bemhtml
+                [techs.bemhtml, {
+                    sourceSuffixes: ['bemhtml', 'bemhtml.js'],
+                    forceBaseTemplates: true,
+                    engineOptions: {elemJsInstances: true}
+                }],
 
-            // html
-            [techs.bemjsonToHtml],
+                // html
+                [techs.bemjsonToHtml],
 
-            // client bemhtml
-            [enbBemTechs.depsByTechToBemdecl, {
-                target: '?.bemhtml.bemdecl.js',
-                sourceTech: 'js',
-                destTech: 'bemhtml'
-            }],
-            [enbBemTechs.deps, {
-                target: '?.bemhtml.deps.js',
-                bemdeclFile: '?.bemhtml.bemdecl.js'
-            }],
-            [enbBemTechs.files, {
-                depsFile: '?.bemhtml.deps.js',
-                filesTarget: '?.bemhtml.files',
-                dirsTarget: '?.bemhtml.dirs'
-            }],
-            [techs.bemhtml, {
-                target: '?.browser.bemhtml.js',
-                filesTarget: '?.bemhtml.files',
-                sourceSuffixes: ['bemhtml', 'bemhtml.js'],
-                engineOptions : { elemJsInstances : true }
-            }],
+                // client bemhtml
+                [enbBemTechs.depsByTechToBemdecl, {
+                    target: '?.bemhtml.bemdecl.js',
+                    sourceTech: 'js',
+                    destTech: 'bemhtml'
+                }],
+                [enbBemTechs.deps, {
+                    target: '?.bemhtml.deps.js',
+                    bemdeclFile: '?.bemhtml.bemdecl.js'
+                }],
+                [enbBemTechs.files, {
+                    depsFile: '?.bemhtml.deps.js',
+                    filesTarget: '?.bemhtml.files',
+                    dirsTarget: '?.bemhtml.dirs'
+                }],
+                [techs.bemhtml, {
+                    target: '?.browser.bemhtml.js',
+                    filesTarget: '?.bemhtml.files',
+                    sourceSuffixes: ['bemhtml', 'bemhtml.js'],
+                    engineOptions: {elemJsInstances: true}
+                }],
 
-            // js
-            [techs.browserJs, { includeYM: true }],
-            [techs.fileMerge, {
-                target: '?.js',
-                sources: ['?.browser.js', '?.browser.bemhtml.js']
-            }],
+                // js
+                [techs.browserJs, {includeYM: true}],
+                [techs.fileMerge, {
+                    target: '?.js',
+                    sources: ['?.browser.js', '?.browser.bemhtml.js']
+                }],
 
-            // beauty.html
-            // для того чтобы файл появился в bundles необходимо выполнить команду:
-            //  ./node_modules/.bin/enb make
-            [techs.htmlBeautify],
+                // beauty.html
+                // для того чтобы файл появился в bundles необходимо выполнить команду:
+                //  ./node_modules/.bin/enb make
+                [techs.htmlBeautify],
 
-            // borschik
-            [techs.borschik, { source: '?.js', target: '?.min.js', minify: isProd }],
-            [techs.borschik, { source: '?.css', target: '?.min.css', minify: isProd }],
-        ]);
+                // borschik
+                [techs.borschik, {source: '?.js', target: '?.min.js', minify: isProd}],
+                [techs.borschik, {source: '?.css', target: '?.min.css', minify: isProd}],
+            ]);
 
-        nodeConfig.addTargets([ /*'?.bemtree.js',*/ '?.html', '?.min.css', '?.min.js', '?.beauty.html']);
+            const targets = [ '?.html', '?.min.css', '?.min.js'];
+            if(isProd) {
+                targets.push('?.beauty.html');
+            }
+
+            nodeConfig.addTargets(targets);
+        }
     });
 
+    // Для продакшена объединяем бандлы
+    if(isProd) {
+        // Создаем директории для merged-бандлов если не создана (1)
+        createDir('desktop.bundles/merged');
+
+        // Настраиваем сборку merged-бандла
+        config.nodes('*.bundles/merged', function (nodeConfig) {
+
+            const dir = 'desktop.bundles';
+            const bundles = fs.readdirSync(dir);
+            const bemdeclFiles = [];
+
+            // Копируем BEMDECL-файлы в merged-бандл (3)
+            bundles.forEach(function (bundle) {
+                if (bundle === 'merged' || bundle.match(/^\./gi)) return;
+
+                const node = `${dir}/${bundle}`;
+                const target = `${bundle}.bemdecl.js`;
+
+                nodeConfig.addTechs([
+                    [enbBemTechs.provideBemdecl, { node , target }]
+                ]);
+
+                bemdeclFiles.push(target);
+            });
+
+            // Объединяем скопированные BEMDECL-файлы (4)
+            nodeConfig.addTechs([
+                [enbBemTechs.mergeBemdecl, { sources: bemdeclFiles }]
+            ]);
+
+            // Обычная сборка бандла (5)
+            nodeConfig.addTechs([
+                [enbBemTechs.levels, { levels: ['desktop.blocks','common.blocks'] }],
+                [enbBemTechs.deps],
+                [enbBemTechs.files],
+                [techs.stylus],
+                [js, { target: '?.js' }],
+                [techs.borschik, {source: '?.js', target: '?.min.js', minify: true}],
+                [techs.borschik, { source: '?.css', target: '?.min.css', minify: true }]
+            ]);
+
+            nodeConfig.addTargets(['?.min.css', '?.js', '?.min.js']);
+        });
+    }
+};
+
+const createBuildDir = (buildInfo) => {
+    createDir('build/css');
+    createDir('build/js');
+    createDir('build/img');
+
+    fs.createReadStream('desktop.bundles/merged/merged.css').pipe(fs.createWriteStream('build/css/styles.css'));
+    fs.createReadStream('desktop.bundles/merged/merged.min.css').pipe(fs.createWriteStream('build/css/styles.min.css'));
+    fs.createReadStream('desktop.bundles/merged/merged.js').pipe(fs.createWriteStream('build/js/scripts.js'));
+    fs.createReadStream('desktop.bundles/merged/merged.min.js').pipe(fs.createWriteStream('build/js/scripts.min.js'));
+
+    fs.readdirSync('assets').map(dir => {
+        if (dir.match(/^\./gi)) return;
+        console.log('dir', dir);
+        fse.copySync(`assets/${dir}`, `build/${dir}`);
+    });
+
+
+    // Копируем BEMDECL-файлы в merged-бандл (3)
+    const bundlesDir = 'desktop.bundles';
+    fs.readdirSync(bundlesDir).map(bundle =>{
+        if (bundle === 'merged' || bundle.match(/^\./gi)) return;
+        console.log(bundle);
+        const version = (new Date()).getTime();
+        fs.readFile(`${bundlesDir}/${bundle}/${bundle}.beauty.html`, (err, content) => {
+            if(!err) {
+                content = content.toString();
+                content = content
+                    .split(`${bundle}.min.css`).join("css/styles.css?v"+version)
+                    .split(`${bundle}.min.js`).join("js/scripts.js?v"+version)
+                    .split("../../../assets/css/").join("css/")
+                    .split("../../../assets/img/").join("img/")
+                    .split("../../../assets/js/").join("js/")
+
+                fs.open(`build/${bundle}.html`, "w", 0644, (err, handle) => {
+                    if(!err) {
+                        fs.write(handle, content, function(err, result) {
+                            if(err) console.log('error', err);
+                        });
+                    }
+                })
+            }
+        });
+    });
+};
+
+module.exports = (config) => {
+    make(config);
+
     config.task('dist', (task) => {
-        console.log(task);
+
+        return task.buildTargets(glob.sync('*.bundles/*'))
+            .then( buildInfo => createBuildDir(buildInfo));
+
     });
 };
