@@ -185,16 +185,14 @@ const createBuildDir = (buildInfo) => {
 
     fs.readdirSync('assets').map(dir => {
         if (dir.match(/^\./gi)) return;
-        console.log('dir', dir);
         fse.copySync(`assets/${dir}`, `build/${dir}`);
     });
-
 
     // Копируем BEMDECL-файлы в merged-бандл (3)
     const bundlesDir = 'desktop.bundles';
     fs.readdirSync(bundlesDir).map(bundle =>{
         if (bundle === 'merged' || bundle.match(/^\./gi)) return;
-        console.log(bundle);
+
         const version = (new Date()).getTime();
         fs.readFile(`${bundlesDir}/${bundle}/${bundle}.beauty.html`, (err, content) => {
             if(!err) {
