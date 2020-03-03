@@ -240,7 +240,7 @@ const createBuildDir = (buildInfo) => {
             from: `desktop.bundles/merged/${file}`,
             to: `${xref[file]}`,
             replaceContent: [
-                {search: "../../assets/img/", replace: "../img/"}
+                {search: "../../build/img/", replace: "../img/"}
             ]
         });
 
