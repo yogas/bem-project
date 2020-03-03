@@ -165,21 +165,44 @@ const make = (config) => {
                 [techs.stylus],
                 [js, { target: '?.js' }],
                 [techs.borschik, {source: '?.js', target: '?.min.js', minify: true}],
-                [techs.borschik, { source: '?.css', target: '?.min.css', minify: true }]
+                [techs.borschik, { source: '?.css', target: '?.min.css', minify: true }],
+                [techs.borschik, { source: '?.css', target: '?.dist.css', minify: false }]
             ]);
 
-            nodeConfig.addTargets(['?.min.css', '?.js', '?.min.js']);
+            nodeConfig.addTargets(['?.min.css', '?.dist.css', '?.js', '?.min.js']);
         });
     }
 };
+
+const replaceContentAndCopyFile = (params) => {
+    const {from='', to='', replaceContent=[]} = params;
+    if(from === '' || to === '') return false;
+
+    fs.readFile(from, (err, content) => {
+        if(!err) {
+            content = content.toString();
+            replaceContent.map(({search, replace}) => {
+                content = content.split(search).join(replace);
+            });
+
+            fs.open(to, "w", 0644, (err, handle) => {
+                if(!err) {
+                    fs.write(handle, content, function(err, result) {
+                        if(err) console.log('error', err);
+                    });
+                }
+            })
+        }
+    });
+}
 
 const createBuildDir = (buildInfo) => {
     createDir('build/css');
     createDir('build/js');
     createDir('build/img');
 
-    fs.createReadStream('desktop.bundles/merged/merged.css').pipe(fs.createWriteStream('build/css/styles.css'));
-    fs.createReadStream('desktop.bundles/merged/merged.min.css').pipe(fs.createWriteStream('build/css/styles.min.css'));
+    //fs.createReadStream('desktop.bundles/merged/merged.dist.css').pipe(fs.createWriteStream('build/css/styles.css'));
+    //fs.createReadStream('desktop.bundles/merged/merged.min.css').pipe(fs.createWriteStream('build/css/styles.min.css'));
     fs.createReadStream('desktop.bundles/merged/merged.js').pipe(fs.createWriteStream('build/js/scripts.js'));
     fs.createReadStream('desktop.bundles/merged/merged.min.js').pipe(fs.createWriteStream('build/js/scripts.min.js'));
 
@@ -194,25 +217,35 @@ const createBuildDir = (buildInfo) => {
         if (bundle === 'merged' || bundle.match(/^\./gi)) return;
 
         const version = (new Date()).getTime();
-        fs.readFile(`${bundlesDir}/${bundle}/${bundle}.beauty.html`, (err, content) => {
-            if(!err) {
-                content = content.toString();
-                content = content
-                    .split(`${bundle}.min.css`).join("css/styles.css?v"+version)
-                    .split(`${bundle}.min.js`).join("js/scripts.js?v"+version)
-                    .split("../../../assets/css/").join("css/")
-                    .split("../../../assets/img/").join("img/")
-                    .split("../../../assets/js/").join("js/")
-
-                fs.open(`build/${bundle}.html`, "w", 0644, (err, handle) => {
-                    if(!err) {
-                        fs.write(handle, content, function(err, result) {
-                            if(err) console.log('error', err);
-                        });
-                    }
-                })
-            }
+        replaceContentAndCopyFile({
+            from: `${bundlesDir}/${bundle}/${bundle}.beauty.html`,
+            to: `build/${bundle}.html`,
+            replaceContent: [
+                {search: `${bundle}.min.css`, replace: "css/styles.css?v"+version},
+                {search: `${bundle}.min.js`, replace: "js/scripts.js?v"+version},
+                {search: "../../../assets/css/", replace: "css/"},
+                {search: "../../../assets/img/", replace: "img/"},
+                {search: "../../../assets/js/", replace: "js/"},
+            ]
         });
+
+    });
+
+    // Подставляем корректные адреса для изображений в стилях
+    ['merged.dist.css', 'merged.min.css'].map(file => {
+        const xref = {
+            'merged.dist.css': 'build/css/styles.css',
+            'merged.min.css': 'build/css/styles.min.css'
+        };
+
+        replaceContentAndCopyFile({
+            from: `desktop.bundles/merged/${file}`,
+            to: `${xref[file]}`,
+            replaceContent: [
+                {search: "../../assets/img/", replace: "../img/"}
+            ]
+        });
+
     });
 };
 
