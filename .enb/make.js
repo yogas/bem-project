@@ -251,7 +251,7 @@ module.exports = (config) => {
     make(config);
 
     config.task('dist', (task) => {
-
+        createDir('build');
         return task.buildTargets(glob.sync('*.bundles/*'))
             .then( buildInfo => createBuildDir(buildInfo));
 
