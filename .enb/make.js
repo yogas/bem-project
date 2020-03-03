@@ -201,8 +201,6 @@ const createBuildDir = (buildInfo) => {
     createDir('build/js');
     createDir('build/img');
 
-    //fs.createReadStream('desktop.bundles/merged/merged.dist.css').pipe(fs.createWriteStream('build/css/styles.css'));
-    //fs.createReadStream('desktop.bundles/merged/merged.min.css').pipe(fs.createWriteStream('build/css/styles.min.css'));
     fs.createReadStream('desktop.bundles/merged/merged.js').pipe(fs.createWriteStream('build/js/scripts.js'));
     fs.createReadStream('desktop.bundles/merged/merged.min.js').pipe(fs.createWriteStream('build/js/scripts.min.js'));
 
