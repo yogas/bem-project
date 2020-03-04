@@ -197,6 +197,7 @@ const replaceContentAndCopyFile = (params) => {
 }
 
 const createBuildDir = (buildInfo) => {
+    createDir('build');
     createDir('build/css');
     createDir('build/js');
     createDir('build/img');
@@ -251,7 +252,6 @@ module.exports = (config) => {
     make(config);
 
     config.task('dist', (task) => {
-        createDir('build');
         return task.buildTargets(glob.sync('*.bundles/*'))
             .then( buildInfo => createBuildDir(buildInfo));
 
