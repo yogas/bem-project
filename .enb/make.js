@@ -197,6 +197,7 @@ const replaceContentAndCopyFile = (params) => {
 }
 
 const createBuildDir = (buildInfo) => {
+    createDir('assets');
     createDir('build');
     createDir('build/css');
     createDir('build/js');
