@@ -18,7 +18,7 @@ fs.readdirSync('desktop.bundles').map(item => {
 module.exports = {
     block: 'page',
     title: 'Список страниц',
-    favicon: '/favicon.ico',
+    favicon: '../../assets/img/favicon.ico',
     head: [
         { elem: 'meta', attrs: { name: 'description', content: '' } },
         { elem: 'meta', attrs: { name: 'viewport', content: 'width=device-width, initial-scale=1' } },
