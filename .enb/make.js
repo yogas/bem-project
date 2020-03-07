@@ -162,7 +162,7 @@ const make = (config) => {
                 [enbBemTechs.levels, { levels: ['desktop.blocks','common.blocks'] }],
                 [enbBemTechs.deps],
                 [enbBemTechs.files],
-                [techs.stylus],
+                [techs.stylus, {autoprefixer: true}],
                 [js, { target: '?.js' }],
                 [techs.borschik, {source: '?.js', target: '?.min.js', minify: true}],
                 [techs.borschik, { source: '?.css', target: '?.min.css', minify: true }],
