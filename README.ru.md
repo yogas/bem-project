@@ -43,6 +43,12 @@ npm install
 ### Сборка проекта
 
 ```bash
+npm run dist
+```
+собирает проект в папке build в корне проекта.
+
+или
+```bash
 ./node_modules/.bin/enb make
 ```
 или
