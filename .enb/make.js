@@ -185,7 +185,7 @@ const replaceContentAndCopyFile = (params) => {
                 content = content.split(search).join(replace);
             });
 
-            fs.open(to, "w", 0644, (err, handle) => {
+            fs.open(to, "w", 0o644, (err, handle) => {
                 if(!err) {
                     fs.write(handle, content, function(err, result) {
                         if(err) console.log('error', err);

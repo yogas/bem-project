@@ -16,3 +16,4 @@ npm-debug.log
 !*pages*/*/*.bemjson.js
 !*pages*/.bem/*
 build/
+/desktop.bundles/merged/
