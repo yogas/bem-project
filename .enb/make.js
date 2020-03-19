@@ -41,6 +41,8 @@ const levels = [
     'desktop.blocks'
 ];
 
+const includeYM = false;
+
 const createDir = (name) => {
     if (!fs.existsSync(name)) {
         fs.mkdirSync(name);
@@ -100,7 +102,7 @@ const make = (config) => {
                 }],
 
                 // js
-                [techs.browserJs, {includeYM: true}],
+                [techs.browserJs, {includeYM}],
                 [techs.fileMerge, {
                     target: '?.js',
                     sources: ['?.browser.js', '?.browser.bemhtml.js']
@@ -162,7 +164,7 @@ const make = (config) => {
                 [enbBemTechs.deps],
                 [enbBemTechs.files],
                 [techs.stylus, {autoprefixer: true}],
-                [techs.browserJs, { target: '?.js' }],
+                [techs.browserJs, { target: '?.js', includeYM }],
                 [techs.borschik, {source: '?.js', target: '?.min.js', minify: true}],
                 [techs.borschik, { source: '?.css', target: '?.min.css', minify: true }],
                 [techs.borschik, { source: '?.css', target: '?.dist.css', minify: false }]
