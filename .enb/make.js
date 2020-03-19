@@ -42,7 +42,7 @@ const devLevels = [
     'common.blocks',
     'desktop.blocks'
 ]
-const includeYM = true; // подключать модули js-модули яндекса
+const includeYM = true; // подключать js-модули i-bem
 const levels = includeYM ? [...yandexLevels, ...devLevels] : devLevels;
 
 const createDir = (name) => {
