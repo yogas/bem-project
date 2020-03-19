@@ -29,7 +29,7 @@ const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
 
-const levels = [
+const yandexLevels = [
     { path: 'node_modules/bem-core/common.blocks', check: false },
     { path: 'node_modules/bem-core/desktop.blocks', check: false },
     // отключаем компоненты Яндекса
@@ -37,11 +37,13 @@ const levels = [
     //{ path: 'node_modules/bem-components/desktop.blocks', check: false },
     //{ path: 'node_modules/bem-components/design/common.blocks', check: false },
     //{ path: 'node_modules/bem-components/design/desktop.blocks', check: false },
+];
+const devLevels = [
     'common.blocks',
     'desktop.blocks'
-];
-
-const includeYM = false;
+]
+const includeYM = true; // подключать модули js-модули яндекса
+const levels = includeYM ? [...yandexLevels, ...devLevels] : devLevels;
 
 const createDir = (name) => {
     if (!fs.existsSync(name)) {
