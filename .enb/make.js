@@ -26,7 +26,6 @@ const techs = {
 const enbBemTechs = require('enb-bem-techs');
 const glob = require('glob');
 const path = require('path');
-const js = require('enb-js/techs/browser-js.js');
 const fs = require('fs');
 const fse = require('fs-extra');
 
@@ -163,7 +162,7 @@ const make = (config) => {
                 [enbBemTechs.deps],
                 [enbBemTechs.files],
                 [techs.stylus, {autoprefixer: true}],
-                [js, { target: '?.js' }],
+                [techs.browserJs, { target: '?.js' }],
                 [techs.borschik, {source: '?.js', target: '?.min.js', minify: true}],
                 [techs.borschik, { source: '?.css', target: '?.min.css', minify: true }],
                 [techs.borschik, { source: '?.css', target: '?.dist.css', minify: false }]
