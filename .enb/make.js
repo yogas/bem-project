@@ -55,7 +55,7 @@ const make = (config) => {
         if (node !== 'merged') {
             nodeConfig.addTechs([
                 // essential
-                [enbBemTechs.levels, {levels: levels}],
+                [enbBemTechs.levels, {levels}],
                 [techs.fileProvider, {target: '?.bemjson.js'}],
                 [enbBemTechs.bemjsonToBemdecl],
                 [enbBemTechs.deps],
@@ -158,7 +158,7 @@ const make = (config) => {
 
             // Обычная сборка бандла (5)
             nodeConfig.addTechs([
-                [enbBemTechs.levels, { levels: ['desktop.blocks','common.blocks'] }],
+                [enbBemTechs.levels, { levels }],
                 [enbBemTechs.deps],
                 [enbBemTechs.files],
                 [techs.stylus, {autoprefixer: true}],
