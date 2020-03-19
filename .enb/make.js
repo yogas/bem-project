@@ -202,8 +202,15 @@ const createBuildDir = (buildInfo) => {
     createDir('build/js');
     createDir('build/img');
 
-    fs.createReadStream('desktop.bundles/merged/merged.js').pipe(fs.createWriteStream('build/js/scripts.js'));
-    fs.createReadStream('desktop.bundles/merged/merged.min.js').pipe(fs.createWriteStream('build/js/scripts.min.js'));
+    const js_path = 'desktop.bundles/merged/merged.js';
+    const min_js_path = 'desktop.bundles/merged/merged.min.js';
+
+    if (fs.existsSync(js_path)) {
+        fs.createReadStream(js_path).pipe(fs.createWriteStream('build/js/scripts.js'));
+    }
+    if (fs.existsSync(min_js_path)) {
+        fs.createReadStream(min_js_path).pipe(fs.createWriteStream('build/js/scripts.min.js'));
+    }
 
     fs.readdirSync('assets').map(dir => {
         if (dir.match(/^\./gi)) return;
