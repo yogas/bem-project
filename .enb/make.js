@@ -195,6 +195,12 @@ const replaceContentAndCopyFile = (params) => {
     });
 }
 
+const copyFile = (from, to) => {
+    if (fs.existsSync(from)) {
+        fs.createReadStream(from).pipe(fs.createWriteStream(to));
+    }
+}
+
 const createBuildDir = (buildInfo) => {
     createDir('assets');
     createDir('build');
@@ -202,15 +208,8 @@ const createBuildDir = (buildInfo) => {
     createDir('build/js');
     createDir('build/img');
 
-    const js_path = 'desktop.bundles/merged/merged.js';
-    const min_js_path = 'desktop.bundles/merged/merged.min.js';
-
-    if (fs.existsSync(js_path)) {
-        fs.createReadStream(js_path).pipe(fs.createWriteStream('build/js/scripts.js'));
-    }
-    if (fs.existsSync(min_js_path)) {
-        fs.createReadStream(min_js_path).pipe(fs.createWriteStream('build/js/scripts.min.js'));
-    }
+    copyFile('desktop.bundles/merged/merged.js', 'build/js/scripts.js');
+    copyFile('desktop.bundles/merged/merged.min.js', 'build/js/scripts.min.js');
 
     fs.readdirSync('assets').map(dir => {
         if (dir.match(/^\./gi)) return;
