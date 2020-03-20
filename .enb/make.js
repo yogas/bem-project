@@ -1,3 +1,4 @@
+const includeYM = true; // подключать js-модули i-bem
 const techs = {
         // essential
         fileProvider: require('enb/techs/file-provider'),
@@ -42,7 +43,7 @@ const devLevels = [
     'common.blocks',
     'desktop.blocks'
 ]
-const includeYM = true; // подключать js-модули i-bem
+
 const levels = includeYM ? [...yandexLevels, ...devLevels] : devLevels;
 
 const createDir = (name) => {
