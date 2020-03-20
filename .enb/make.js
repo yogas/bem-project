@@ -253,7 +253,7 @@ const createBuildDir = (buildInfo) => {
             to: `${xref[file]}`,
             replaceContent: [
                 {search: "../../build/img/", replace: "../img/"},
-                {search: "../../fonts/img/", replace: "../fonts/"}
+                {search: "../../build/fonts/", replace: "../fonts/"}
             ]
         });
 
