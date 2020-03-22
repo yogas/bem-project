@@ -1,0 +1,14 @@
+font-face($path)
+    $name = replace('__','',replace('/','', $path));
+    @font-face
+        font-display: swap;
+        font-family: $name;
+        src: url($path/$name.eot);
+        src: url($path/$name.eot?#iefix) format("embedded-opentype"),
+            url($path/$name.woff) format("woff"),
+            url($path/$name.ttf) format("truetype");
+        font-style: normal;
+        font-weight: normal;
+
+    .font__{$name}
+        font-family: $name, serif;

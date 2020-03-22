@@ -2,7 +2,7 @@ const fs = require('fs');
 const pages = [];
 
 fs.readdirSync('desktop.bundles').map(item => {
-    if(item.match(/^\.|html-pages|merged/gi)) return false;
+    if(item.match(/^\.|^pages|^merged/gi)) return false;
 
     const {title} = require(`../${item}/${item}.bemjson.js`);
     const isProd = process.env.YENV === 'production';
@@ -22,12 +22,12 @@ module.exports = {
     head: [
         { elem: 'meta', attrs: { name: 'description', content: '' } },
         { elem: 'meta', attrs: { name: 'viewport', content: 'width=device-width, initial-scale=1' } },
-        { elem: 'css', url: 'html-pages.min.css' }
+        { elem: 'css', url: 'pages.min.css' }
     ],
-    scripts: [{ elem: 'js', url: 'html-pages.min.js' }],
+    scripts: [{ elem: 'js', url: 'pages.min.js' }],
     content: [
         {
-            block: 'html-pages',
+            block: 'pages',
             content: pages.map(({page, title, href}) => {
                 return {
                     elem: 'item',
