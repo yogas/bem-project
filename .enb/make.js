@@ -44,6 +44,10 @@ const devLevels = [
     'desktop.blocks'
 ]
 
+if(!includeYM) {
+    devLevels.push('system.blocks');
+}
+
 const levels = includeYM ? [...yandexLevels, ...devLevels] : devLevels;
 
 const createDir = (name) => {
