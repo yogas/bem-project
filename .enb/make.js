@@ -237,9 +237,7 @@ const createBuildDir = (buildInfo) => {
             replaceContent: [
                 {search: `${bundle}.min.css`, replace: "css/styles.css?v"+version},
                 {search: `${bundle}.min.js`, replace: "js/scripts.js?v"+version},
-                {search: "../../../assets/css/", replace: "css/"},
-                {search: "../../../assets/img/", replace: "img/"},
-                {search: "../../../assets/js/", replace: "js/"},
+                {search: "../../../assets/", replace: ""}
             ]
         });
 
