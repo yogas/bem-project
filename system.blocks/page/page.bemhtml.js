@@ -13,7 +13,7 @@ block('page')(
             {
                 tag : 'html',
                 attrs : { lang : ctx.lang },
-                cls : 'ua_js_no',
+                //cls : 'ua_js_no',
                 content : [
                     {
                         elem : 'head',
@@ -27,7 +27,7 @@ block('page')(
                                 }
                             },
                             { tag : 'title', content : ctx.title },
-                            { block : 'ua', attrs : { nonce : ctx.nonce } },
+                            //{ block : 'ua', attrs : { nonce : ctx.nonce } },
                             ctx.head,
                             ctx.styles,
                             ctx.favicon? { elem : 'favicon', url : ctx.favicon } : ''
