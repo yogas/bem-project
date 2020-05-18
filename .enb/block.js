@@ -15,7 +15,7 @@ const createFile = (name, content='') => {
 
 const getDeps = (path) => {
     const data = fs.readFileSync(path, 'utf-8');
-    return eval(data.replace(/^\(|\)/gi, ''));
+    return eval(`(${data.replace(/^\(|\)/gi, '')})`);
 }
 
 const getBlockInfo = (path) => {
@@ -26,11 +26,8 @@ const getBlockInfo = (path) => {
     }
 }
 
-const createBlocks = (path) => {
-    const {blockPath, block} = getBlockInfo(path);
-    const deps = getDeps(path);
-
-    deps.forEach(({elem, mods}) => {
+const createBlockItems = (blockPath, block, item) => {
+    item.forEach(({elem, mods}) => {
 
         if(elem !== undefined) {
 
@@ -68,6 +65,14 @@ const createBlocks = (path) => {
             }
         }
     })
+};
+
+const createBlocks = (path) => {
+    const {blockPath, block} = getBlockInfo(path);
+    const deps = getDeps(path);
+
+    createBlockItems(blockPath, block, deps.mustDeps);
+    createBlockItems(blockPath, block, deps.shouldDeps);
 }
 
 if(path) {
