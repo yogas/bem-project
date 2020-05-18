@@ -1,7 +1,7 @@
 ({
     mustDeps: [
         {block: 'settings'},
-        {block: 'fonts'},
+        {block: 'font'},
         {block: 'html'},
         {block: 'body'}
     ]
