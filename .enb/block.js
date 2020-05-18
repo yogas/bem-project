@@ -27,6 +27,8 @@ const getBlockInfo = (path) => {
 }
 
 const createBlockItems = (blockPath, block, item) => {
+    if(item === undefined) return false;
+
     item.forEach(({elem, mods}) => {
 
         if(elem !== undefined) {
