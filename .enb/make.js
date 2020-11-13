@@ -1,4 +1,7 @@
-const includeYM = true; // подключать js-модули i-bem
+const includeYM = false; // подключать js-модули i-bem
+const isBeautify = true; // использовать htmlBeautify
+const winDir = !!process.env.WINDIR; // проверка на Windows
+
 const techs = {
         // essential
         fileProvider: require('enb/techs/file-provider'),
@@ -55,6 +58,33 @@ const createDir = (name) => {
         fs.mkdirSync(name);
     }
 }
+
+const woff2base64 = (path) => {
+    return `data:application/font-woff;charset=utf-8;base64,${fs.readFileSync(path, {encoding: 'base64'})}`;
+};
+
+const fontBase64 = (path) => {
+    const fontsPath = 'build/fonts';
+    const woff = [];
+    const base64 = [];
+
+    let file = fs.readFileSync(path, 'utf-8');
+    const files = fs.readdirSync(fontsPath);
+
+    for(let key in files) {
+        const name = files[key];
+        if(name.match(/\.woff$/)) {
+            woff.push(name);
+        }
+    }
+
+    woff.map( fileName => {
+        const reg = new RegExp(`\.\./fonts/${fileName}`, 'g');
+        file = file.replace(reg, woff2base64(`${fontsPath}/${fileName}`));
+    });
+
+    fs.writeFileSync(path, file);
+};
 
 const make = (config) => {
     const isProd = process.env.YENV === 'production';
@@ -125,8 +155,8 @@ const make = (config) => {
                 [techs.borschik, {source: '?.css', target: '?.min.css', minify: isProd}],
             ]);
 
-            const targets = [ '?.html', '?.min.css', '?.min.js'];
-            if(isProd) {
+            const targets = ['?.html', '?.min.css', '?.min.js'];
+            if(isProd || isBeautify) {
                 targets.push('?.beauty.html');
             }
 
@@ -136,11 +166,12 @@ const make = (config) => {
 
     // Для продакшена объединяем бандлы
     if(isProd) {
+        const dirSep = winDir ? '\\' : '/'; // для Windows \\ для других систем /
         // Создаем директории для merged-бандлов если не создана (1)
-        createDir('desktop.bundles/merged');
+        createDir(`desktop.bundles${dirSep}merged`);
 
         // Настраиваем сборку merged-бандла
-        config.nodes('*.bundles/merged', function (nodeConfig) {
+        config.nodes(`*.bundles${dirSep}merged`, function (nodeConfig) {
 
             const dir = 'desktop.bundles';
             const bundles = fs.readdirSync(dir);
@@ -150,7 +181,7 @@ const make = (config) => {
             bundles.forEach(function (bundle) {
                 if (bundle === 'merged' || bundle.match(/^\./gi)) return;
 
-                const node = `${dir}/${bundle}`;
+                const node = `${dir}${dirSep}${bundle}`;
                 const target = `${bundle}.bemdecl.js`;
 
                 nodeConfig.addTechs([
@@ -159,6 +190,7 @@ const make = (config) => {
 
                 bemdeclFiles.push(target);
             });
+
 
             // Объединяем скопированные BEMDECL-файлы (4)
             nodeConfig.addTechs([
@@ -182,7 +214,7 @@ const make = (config) => {
     }
 };
 
-const replaceContentAndCopyFile = (params) => {
+const replaceContentAndCopyFile = (params, callback=()=>{}) => {
     const {from='', to='', replaceContent=[]} = params;
     if(from === '' || to === '') return false;
 
@@ -196,7 +228,8 @@ const replaceContentAndCopyFile = (params) => {
             fs.open(to, "w", 0o644, (err, handle) => {
                 if(!err) {
                     fs.write(handle, content, function(err, result) {
-                        if(err) console.log('error', err);
+                        if(err)  { console.log('error', err); }
+                        else { callback(); }
                     });
                 }
             })
@@ -257,6 +290,8 @@ const createBuildDir = (buildInfo) => {
                 {search: "../../build/img/", replace: "../img/"},
                 {search: "../../build/fonts/", replace: "../fonts/"}
             ]
+        }, () => {
+            fontBase64(xref[file]);
         });
 
     });
@@ -265,9 +300,21 @@ const createBuildDir = (buildInfo) => {
 module.exports = (config) => {
     make(config);
 
-    config.task('dist', (task) => {
-        return task.buildTargets(glob.sync('*.bundles/*'))
-            .then( buildInfo => createBuildDir(buildInfo));
+    const initDist = (code)=> {
+        config.task(code, (task) => {
+            const bundles = glob.sync('*.bundles/*');
+            const dirs = winDir === undefined ? bundles : {};
+            if(winDir) {
+                for (let line in bundles) {
+                    dirs[line] = `./${bundles[line]}`;
+                }
+            }
 
-    });
+            return task.buildTargets(dirs)
+                .then( buildInfo => createBuildDir(buildInfo));
+
+        });
+    }
+
+    ['dist','pack'].map( code => initDist(code));
 };
